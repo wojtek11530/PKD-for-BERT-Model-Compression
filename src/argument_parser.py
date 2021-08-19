@@ -170,7 +170,8 @@ def complete_argument(args):
         args.cls_checkpoint = os.path.join(MODEL_FOLDER, args.cls_checkpoint)
 
     if args.kd_model == 'kd.cls':
-        output_name = args.kd_model + '.' + str(args.normalize_patience) + '_' + args.task_name + '_nlayer.' + str(args.student_hidden_layers)
+        output_name = args.kd_model + '.' + str(args.normalize_patience) + '_' + args.task_name + '_nlayer.' + str(
+            args.student_hidden_layers)
     else:
         output_name = args.kd_model + '_' + args.task_name + '_nlayer.' + str(args.student_hidden_layers)
     output_name += '_lr.' + str(args.learning_rate) + '_T.' + str(args.T) + '_alpha.' + str(args.alpha)
@@ -219,25 +220,25 @@ def get_predefine_argv(mode='glue', task_name='RTE', train_type='kd'):
         raise NotImplementedError('Please run glue for now')
     elif mode == 'glue':
         argv = [
-                '--task_name', task_name,
-                '--bert_model', 'bert-base-uncased',
-                '--max_seq_length', '128',
-                '--train_batch_size', '32',
-                '--learning_rate', '2e-5',
-                '--num_train_epochs', '4',
-                '--eval_batch_size', '32',
-                '--gradient_accumulation_steps', '1',
-                '--log_every_step', '1',
-                '--output_dir', os.path.join(HOME_DATA_FOLDER, f'outputs/KD/{task_name}/teacher_12layer'),
-                '--do_train', 'True',
-                '--do_eval', 'True',
-                '--fp16', 'True',
-            ]
+            '--task_name', task_name,
+            '--bert_model', 'bert-base-uncased',
+            '--max_seq_length', '128',
+            '--train_batch_size', '32',
+            '--learning_rate', '2e-5',
+            '--num_train_epochs', '4',
+            '--eval_batch_size', '32',
+            '--gradient_accumulation_steps', '1',
+            '--log_every_step', '1',
+            '--output_dir', os.path.join(HOME_DATA_FOLDER, f'outputs/KD/{task_name}/teacher_12layer'),
+            '--do_train', 'True',
+            '--do_eval', 'True',
+            '--fp16', 'True',
+        ]
         if train_type == 'finetune_teacher':
             argv += [
                 '--student_hidden_layers', '12',
                 '--kd_model', 'kd',
-                '--alpha', '0.0',    # alpha = 0 is equivalent to fine-tuning for KD
+                '--alpha', '0.0',  # alpha = 0 is equivalent to fine-tuning for KD
             ]
         if train_type == 'finetune_student':
             argv += [
@@ -251,7 +252,9 @@ def get_predefine_argv(mode='glue', task_name='RTE', train_type='kd'):
                 '--kd_model', 'kd',
                 '--alpha', '0.7',
                 '--T', '20',
-                '--teacher_prediction', f'/home/JJteam/Project/PatientTeacherforBERT/data/outputs/KD/{task_name}/{task_name}_normal_kd_teacher_12layer_result_summary.pkl',
+                '--teacher_prediction',
+                os.path.join(HOME_DATA_FOLDER,
+                             f'outputs/KD/{task_name}/{task_name}_normal_kd_teacher_12layer_result_summary.pkl'),
             ]
         elif train_type == 'kd.cls':
             argv += [
@@ -261,8 +264,10 @@ def get_predefine_argv(mode='glue', task_name='RTE', train_type='kd'):
                 '--alpha', '0.7',
                 '--beta', '500',
                 '--T', '10',
-                '--teacher_prediction', f'/home/JJteam/Project/PatientTeacherforBERT/data/outputs/KD/{task_name}/{task_name}_patient_kd_teacher_12layer_result_summary.pkl',
-                '--fc_layer_idx', '1,3,5,7,9',   # this for pkd-skip
+                '--teacher_prediction',
+                os.path.join(HOME_DATA_FOLDER,
+                             f'outputs/KD/{task_name}/{task_name}_patient_kd_teacher_12layer_result_summary.pkl'),
+                '--fc_layer_idx', '1,3,5,7,9',  # this for pkd-skip
                 '--normalize_patience', 'True',
             ]
     else:
