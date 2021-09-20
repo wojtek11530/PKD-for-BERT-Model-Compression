@@ -326,6 +326,8 @@ if args.do_train:
         else:
             result = eval_model_dataloader_nli(args.task_name.lower(), eval_label_ids, student_encoder, student_classifier, eval_dataloader,
                                                args.kd_model, num_labels, device, args.weights, args.fc_layer_idx, output_mode)
+
+
         if args.task_name in ['CoLA']:
             print('{},{},{}'.format(epoch+1, result['mcc'], result['eval_loss']), file=log_eval)
         else:
@@ -333,6 +335,10 @@ if args.do_train:
                 print('{},{},{}'.format(epoch+1, result['acc'], result['loss']), file=log_eval)
             else:
                 print('{},{},{}'.format(epoch+1, result['acc'], result['eval_loss']), file=log_eval)
+
+        logger.info("Eval results on dev dataset")
+        for key in sorted(result.keys()):
+            logger.info("  %s = %s", key, str(result[key]))
 
         if args.n_gpu > 1:
             torch.save(student_encoder.module.state_dict(), os.path.join(args.output_dir, output_model_file + f'_e.{epoch}.encoder.pkl'))
@@ -350,7 +356,7 @@ if args.do_eval:
 
     output_test_file = os.path.join(args.output_dir, "test_results_" + output_model_file + '.txt')
     with open(output_test_file, "w") as writer:
-        logger.info("***** Eval results *****")
+        logger.info("***** Eval results on test dataset *****")
         for key in sorted(result.keys()):
             logger.info("  %s = %s", key, str(result[key]))
             writer.write("%s = %s\n" % (key, str(result[key])))
