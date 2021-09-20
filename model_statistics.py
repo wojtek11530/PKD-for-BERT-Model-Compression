@@ -1,5 +1,6 @@
 import argparse
 import logging
+import math
 import os
 
 import numpy as np
@@ -173,9 +174,19 @@ encoder_input = tuple([torch.randint(high=len(tokenizer.vocab),
                        torch.randint(high=1, size=(1, args.max_seq_length), dtype=torch.int64, device=args.device),
                        torch.randint(high=1, size=(1, args.max_seq_length), dtype=torch.int64, device=args.device)])
 
-macs, params = profile(student_encoder, inputs=encoder_input)
-print(f"Encoder, macs: {macs}, params: {params}")
+encoder_macs, encoder_params = profile(student_encoder, inputs=encoder_input)
 
 cls_input = torch.randn(1, student_config.hidden_size, device=args.device)
-macs, params = profile(student_classifier, inputs=(cls_input,))
-print(f"Classifier, macs: {macs}, params: {params}")
+cls_macs, cls_params = profile(student_classifier, inputs=(cls_input,))
+
+
+def print_results(macs, params, title=''):
+    if len(title) != 0:
+        print("- " + title)
+    print(f"\tmacs [G]: {macs / math.pow(10, 9):.2f}, params [M]: {params / math.pow(10, 6):.2f}")
+
+
+print("Results")
+print_results(encoder_macs, encoder_params, 'Encoder')
+print_results(cls_macs, cls_params, 'Classifier')
+print_results(encoder_macs + cls_macs, encoder_params + cls_params, 'Whole model')
