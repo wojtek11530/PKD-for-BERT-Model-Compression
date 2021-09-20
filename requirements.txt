@@ -9,3 +9,5 @@ regex
 # For Debug
 pandas
 matplotlib
+
+thop
