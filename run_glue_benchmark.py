@@ -28,7 +28,7 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
 logger = logging.getLogger(__name__)
 
 
-DEBUG = True
+DEBUG = False
 
 ALL_TASKS = ['MRPC', 'RTE', 'SST-2', 'MNLI', 'QQP', 'MNLI-mm', 'QNLI', 'race-merge']
 
@@ -72,7 +72,7 @@ config = BertConfig(os.path.join(bert_model, 'bert_config.json'))
 tokenizer = BertTokenizer.from_pretrained(bert_model, do_lower_case=True)
 args = argparse.Namespace(n_gpu=1,
                           device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-                          fp16=True,
+                          fp16=False,
                           eval_batch_size=32,
                           max_seq_length=128)
 
